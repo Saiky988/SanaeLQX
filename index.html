@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sanae Executors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&family=Rubik:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background-color: #1a1a2e;
+      color: white;
+      padding-top: 50px; /* để tránh header đè */
+    }
+
+    header {
+      background-color: #0f0f1d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-family: 'Rubik', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      background: linear-gradient(270deg, #ff00c8, #6e7bff, #ff00c8);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: waveColor 5s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    @keyframes waveColor {
+      0% {
+      background-position: 0% 50%;
+      }
+      50% {
+      background-position: 100% 50%;
+      }
+      100% {
+      background-position: 0% 50%;
+      }
+    }
+
+    .menu-container {
+      position: relative;
+    }
+
+    .menu-btn {
+      font-size: 28px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 65px;
+      right: 0;
+      margin-bottom: 20px;
+      background: rgba(35, 35, 66, 0.95);
+      backdrop-filter: blur(6px);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      min-width: 160px;
+    }
+
+    .dropdown.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 12px 20px;
+      text-decoration: none;
+      color: white;
+      font-size: 16px;
+      transition: background 0.2s;
+    }
+
+    .dropdown a:hover {
+      background-color: #2f2f5e;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-top: 40px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+      scroll-margin-top: 100px;
+    }
+
+    .executor-card {
+      position: relative;
+      background-color: #292950;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .executor-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 15px #6e7bff50;
+    }
+
+    .executor-card h3 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .download-btn {
+      position: relative;
+      display: inline-block;
+      padding: 10px 20px;
+      font-weight: bold;
+      color: white;
+      text-decoration: none;
+      border-radius: 999px;
+      overflow: hidden;
+      background: linear-gradient(to right, #ff00c8, #6e7bff);
+      transition: 0.3s ease;
+    }
+
+    .download-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(to right, #ff00c8, #6e7bff);
+      opacity: 0.3;
+      z-index: 0;
+      transform: skewX(-20deg);
+      animation: wave 4s ease-in-out          infinite alternate;
+      animation-delay: calc(-1s * var(--delay, 0));
+    }
+
+    .download-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .download-btn:hover {
+      opacity: 0.9;
+    }
+
+    @keyframes wave {
+       0% {
+         transform: translateX(-25%) skewX(-20deg);
+       }
+       100% {
+         transform: translateX(25%) skewX(-20deg);
+       }
+    }
+    .status {
+      background: #00ffab20;
+      color: #00ffab;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-top: 5px;
+      display: inline-block;
+    }
+
+    .executor-card .download-btn {
+      position: absolute;
+      top: 40px;
+      right: 20px;
+      margin: 0;
+    }
+
+    @media screen and (max-width: 600px) {
+      .executor-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .download-btn {
+        margin-top: 10px;
+      }
+    }
+
+    footer {
+      text-align: center;
+      color: #bbb;
+      font-size: 14px;
+      margin: 40px 0 20px;
+      padding-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo" onclick="window.location.href='https://saiky988.github.io/SanaeExecutorX/'">SanaeEx</div>
+  <div class="menu-container">
+    <div class="menu-btn" onclick="toggleDropdown()">☰</div>
+    <div class="dropdown" id="dropdownMenu">
+      <a href="https://saiky988.github.io/SanaeExecutorX/">Home</a>
+      <a href="#ioshm">iOS - HM</a>
+      <a href="#iosus">iOS - US</a>
+      <a href="https://discord.gg/#" target="_blank">Discord</a>
+    </div>
+  </div>
+</header>
+
+<!-- iOS HM -->
+<div class="container">
+  <h2 id="ioshm">iOS - HackMap</h2>
+
+  <div class="executor-card">
+    <div>
+      <h3>Liên Quân Mobile</h3>
+      <div class="status">🟢 Working</div>
+    </div>
+    <a class="download-btn" href="https://testflight.apple.com/join/4ZdmAWGY">Download</a>
+  </div>
+
+  <div class="executor-card">
+    <div>
+      <h3>GetKey</h3>
+      <div class="status">🟢 Working</div>
+    </div>
+    <a class="download-btn" href="https://authtool.app/get-key?code=0178b6f1-8f40-442d-a27d-2d4a6be8f51f">GetKey</a>
+  </div>
+
+<!-- iOS US -->
+  <h2 id="iosus">iOS - UnlockSkin</h2>
+
+  <div class="executor-card">
+    <div>
+      <h3>Liên Quân Mobile</h3>
+      <div class="status">🟢 Working</div>
+    </div>
+    <a class="download-btn" href="https://testflight.apple.com/join/GPV2ws5N">Download</a>
+  </div>
+
+  <div class="executor-card">
+    <div>
+      <h3>GetKey</h3>
+      <div class="status">🟢 Working</div>
+    </div>
+    <a class="download-btn" href="https://authtool.app/get-key?code=0178b6f1-8f40-442d-a27d-2d4a6be8f51f">GetKey</a>
+  </div>
+</div>
+
+<footer>
+  © 2025 SanaeEx - Updated on 06/30/2025 | made by: <strong>Saiky</strong>
+</footer>
+
+<!-- Script -->
+<script>
+  // Dropdown toggle
+  function toggleDropdown() {
+    const menu = document.getElementById('dropdownMenu');
+    menu.classList.toggle('show');
+  }
+
+  // Đóng dropdown khi click ra ngoài
+  window.addEventListener('click', function (e) {
+    const menu = document.getElementById('dropdownMenu');
+    const button = document.querySelector('.menu-btn');
+    if (!menu.contains(e.target) && !button.contains(e.target)) {
+      menu.classList.remove('show');
+    }
+  });
+
+  // Đóng dropdown khi chọn mục
+  window.addEventListener('DOMContentLoaded', function () {
+    const items = document.querySelectorAll('#dropdownMenu a');
+    items.forEach(item => {
+      item.addEventListener('click', () => {
+        document.getElementById('dropdownMenu').classList.remove('show');
+      });
+    });
+
+    // Hiệu ứng gõ chữ cho logo
+    const texts = ["SanaeEx", "Sanae Executor", "For Android & iOS"];
+    const el = document.getElementById("logo-text");
+
+    let index = 0;
+    let char = 0;
+    let isDeleting = false;
+
+    function type() {
+      const current = texts[index];
+      el.textContent = current.substring(0, char);
+
+      if (!isDeleting) {
+        char++;
+        if (char === current.length + 1) {
+          isDeleting = true;
+          setTimeout(type, 2000);
+          return;
+        }
+      } else {
+        char--;
+        if (char === 0) {
+          isDeleting = false;
+          index = (index + 1) % texts.length;
+        }
+      }
+
+      const speed = isDeleting ? 50 : 80;
+      setTimeout(type, speed + Math.random() * 50);
+    }
+
+    type();
+  });
+</script>
+
+</body>
+</html>
