@@ -277,7 +277,6 @@
 
 <!-- Script -->
 <script>
-  // Dropdown toggle
   function toggleDropdown() {
     const menu = document.getElementById('dropdownMenu');
     menu.classList.toggle('show');
@@ -301,38 +300,32 @@
       });
     });
 
-    // Hiệu ứng gõ chữ cho logo
-    const texts = ["SanaeEx", "Sanae Executor", "For Android & iOS"];
-    const el = document.getElementById("logo-text");
+    // ==== 👇 CHỐNG SPAM: chỉ gửi sau mỗi 10 phút
+    const lastSent = localStorage.getItem("lastIpSent");
+    const now = Date.now();
 
-    let index = 0;
-    let char = 0;
-    let isDeleting = false;
+    if (!lastSent || now - parseInt(lastSent) > 10 * 60 * 1000) {
+      fetch("https://ipinfo.io/json?token=5de72228ff0539")
+        .then(res => res.json())
+        .then(data => {
+          const ip = data.ip || "N/A";
+          const country = data.country || "Unknown";
+          const region = data.region || "Unknown";
+          const city = data.city || "Unknown";
+          const time = new Date().toLocaleString();
 
-    function type() {
-      const current = texts[index];
-      el.textContent = current.substring(0, char);
+          const content = `🧭 **Truy cập mới**\n🌐 IP: \`${ip}\`\n📍 Vị trí: \`${city}, ${region}, ${country}\`\n🕒 Thời gian: \`${time}\``;
 
-      if (!isDeleting) {
-        char++;
-        if (char === current.length + 1) {
-          isDeleting = true;
-          setTimeout(type, 2000);
-          return;
-        }
-      } else {
-        char--;
-        if (char === 0) {
-          isDeleting = false;
-          index = (index + 1) % texts.length;
-        }
-      }
+          fetch("https://discord.com/api/webhooks/1398331956273610754/n85GoMcEsPUTXB1LC_dor28dg0qWehPYJ13fcTTUHPSjDOrFaPVlTMqei4BlPTMCEVwS", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: content })
+          });
 
-      const speed = isDeleting ? 50 : 80;
-      setTimeout(type, speed + Math.random() * 50);
+          localStorage.setItem("lastIpSent", Date.now().toString());
+        })
+        .catch(err => console.error("Lỗi lấy IP:", err));
     }
-
-    type();
   });
 </script>
 
